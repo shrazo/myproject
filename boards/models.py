@@ -11,7 +11,7 @@ class Board(models.Model):
 
 class Topic(models.Model):
     subject = models.CharField(max_length=100)
-    last_update = models.DateTimeField(auto_now=True)
+    last_updated = models.DateTimeField(auto_now_add=True)
     board = models.ForeignKey(Board, on_delete=models.CASCADE, related_name='topics')
     starter = models.ForeignKey(User, on_delete=models.CASCADE, related_name='topics')
 
