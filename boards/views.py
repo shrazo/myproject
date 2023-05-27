@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 
 # Create your views here.
 from .models import Board, Topic, Post
+from .forms import NewTopicForm
 
 def home(request):
     boards = Board.objects.all()
@@ -22,27 +23,56 @@ def board_topics(request, pk):
     template = 'boards/topics.html'
     return render(request, template, context)
 
+# # Naive approach
+# def new_topic(request, pk):
+#     board = get_object_or_404(Board, pk=pk)
+#     if request.method=='POST':
+#         subject = request.POST['subject']
+#         message = request.POST['message']
+
+#         user = User.objects.first()
+#         topic = Topic.objects.create(
+#             subject=subject,
+#             board = board,
+#             starter=user
+#         )
+#         post = Post.objects.create(
+#             message = message,
+#             topic = topic,
+#             created_by = user
+#         )
+#         return redirect('topics', pk=pk)
+    
+#     context = {
+#         'board': board
+#     }
+#     template = 'boards/new_topic.html'
+#     return render(request, template, context)
+
+# Better approach
 def new_topic(request, pk):
     board = get_object_or_404(Board, pk=pk)
-    if request.method=='POST':
-        subject = request.POST['subject']
-        message = request.POST['message']
+    user = User.objects.first()
 
-        user = User.objects.first()
-        topic = Topic.objects.create(
-            subject=subject,
-            board = board,
-            starter=user
-        )
-        post = Post.objects.create(
-            message = message,
-            topic = topic,
-            created_by = user
-        )
-        return redirect('topics', pk=pk)
-    
+    if request.method=='POST':
+        form = NewTopicForm(request.POST)
+        if form.is_valid():
+            topic = form.save(commit=False)
+            topic.board = board 
+            topic.starter = user 
+            topic.save()
+            post = Post.objects.create(
+                message = form.cleaned_data.get('message'),
+                topic = topic,
+                created_by = user
+            )
+            return redirect('topics', pk=board.pk)
+    else:
+        form = NewTopicForm()
+        
     context = {
-        'board': board
+        'board': board,
+        'form': form
     }
     template = 'boards/new_topic.html'
     return render(request, template, context)
