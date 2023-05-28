@@ -1,5 +1,7 @@
-{% load static %}<!DOCTYPE html>
+{% load static %}
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -15,16 +17,42 @@
     <link href="https://fonts.googleapis.com/css2?family=Rubik+Puddles&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/app.css' %}">
 </head>
+
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
         <div class="container">
-            <a href="{% url 'home' %}" class="navbar-brand">Django Boards</a>
+          <a class="navbar-brand" href="{% url 'home' %}">Django Boards</a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mainMenu" aria-controls="mainMenu" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="mainMenu">
+            {% if user.is_authenticated %}
+              <ul class="navbar-nav ml-auto">
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" id="userMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    {{ user.username }}
+                  </a>
+                  <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userMenu">
+                    <a class="dropdown-item" href="#">My account</a>
+                    <a class="dropdown-item" href="{% url 'password_reset' %}">Change password</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="{% url 'logout' %}">Log out</a>
+                  </div>
+                </li>
+              </ul>
+            {% else %}
+              <form class="form-inline ml-auto">
+                <a href="{% url 'login' %}" class="btn btn-outline-secondary">Log in</a>
+                <a href="{% url 'signup' %}" class="btn btn-primary ml-2">Sign up</a>
+              </form>
+            {% endif %}
+          </div>
         </div>
-    </nav>
+      </nav>
     <div class="container">
         <ol class="breadcrumb my-4">
             {% block breadcrumb %}
-            
+
             {% endblock %}
         </ol>
 
@@ -32,5 +60,9 @@
         {% endblock %}
 
     </div>
+    <script src="{% static 'js/jquery-3.7.0.min.js' %}"></script>
+    <script src="{% static 'js/popper.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
 </body>
+
 </html>
