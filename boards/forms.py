@@ -1,5 +1,5 @@
 from django import forms
-from .models import Topic 
+from .models import Topic, Post
 
 class NewTopicForm(forms.ModelForm):
     message = forms.CharField(
@@ -18,3 +18,9 @@ class NewTopicForm(forms.ModelForm):
         fields = ['subject', 'message'] 
         # subject inherited from Topic class
         # message is defined here
+
+
+class PostForm(forms.ModelForm):
+    class Meta:
+        model = Post 
+        fields = ['message', ] 
